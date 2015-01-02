@@ -1,0 +1,44 @@
+{
+  "name": "bacon-cast",
+  "version": "1.0.0",
+  "description": "Convert various types of streams to Bacon.js streams.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/StreakYC/bacon-cast.git"
+  },
+  "keywords": [
+    "bacon",
+    "bacon.js",
+    "frp",
+    "reactive",
+    "stream",
+    "streams",
+    "EventStream",
+    "Rx",
+    "RxJs",
+    "Observable"
+  ],
+  "author": "Chris Cowan <cowan@streak.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/StreakYC/bacon-cast/issues"
+  },
+  "homepage": "https://github.com/StreakYC/bacon-cast",
+  "devDependencies": {
+    "baconjs": "^0.7.41",
+    "mocha": "^2.1.0",
+    "rx": "^2.3.22"
+  },
+  "peerDependencies": {
+    "baconjs": "^0.7.41"
+  },
+  "dependencies": {
+    "lodash.constant": "^2.4.1",
+    "lodash.noop": "^2.4.1",
+    "lodash.once": "^2.4.1"
+  }
+}
