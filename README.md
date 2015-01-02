@@ -13,7 +13,9 @@ application.
 * Casts non-streams into a Bacon stream of one item by using Bacon.once().
 
 BaconCast is intended for use in nodejs and in browsers via CommonJS bundlers
-like Browserify.
+like Browserify. This project is in NPM and can be installed with
+
+    npm install bacon-cast
 
 ## Example
 
