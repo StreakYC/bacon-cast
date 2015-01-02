@@ -4,8 +4,8 @@ var constant = require('lodash.constant');
 
 // Bacon doesn't support stream instances from different instances of the
 // library directly interacting. This function converts a foreign Bacon stream
-// into a native Bacon stream. It also converts non-streams into a stream that
-// emits a single value.
+// or an RxJS stream into a native Bacon stream. It also converts non-streams
+// into a stream that emits a single value.
 function baconCast(Bacon, input) {
   if (input && input.subscribe && input.subscribeOnNext) { // RxJS
     return Bacon.fromBinder(function(sink) {
