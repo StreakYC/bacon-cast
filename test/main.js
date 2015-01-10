@@ -241,7 +241,8 @@ describe('baconCast', function() {
           break;
         case 3:
           assert(event instanceof Bacon.End);
-          done();
+          // If the stream doesn't stop, done won't get called.
+          setTimeout(done, 0);
           break;
         default:
           throw new Error("Should not happen");
