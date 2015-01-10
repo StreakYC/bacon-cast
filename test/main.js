@@ -250,6 +250,43 @@ describe('baconCast', function() {
     });
   });
 
+  it('supports Bacon infinite synchronous observable unsubscription', function(done) {
+    var i = 0;
+    var s = baconCast(Bacon, Bacon.fromBinder(function(sink) {
+      while (sink(null) !== Bacon.noMore) {}
+    })).map(function() {
+      if (++i >= 3) {
+        var err = new Error("Should not happen");
+        // The error would be caught by Rx, so also throw it where it will fail the test.
+        setTimeout(function() {
+          throw err;
+        }, 0);
+        throw err;
+      }
+      return i;
+    }).take(2);
+
+    var calls = 0;
+    s.subscribe(function(event) {
+      switch(++calls) {
+        case 1:
+          assert(event instanceof Bacon.Next);
+          assert.strictEqual(event.value(), 1);
+          break;
+        case 2:
+          assert(event instanceof Bacon.Next);
+          assert.strictEqual(event.value(), 2);
+          break;
+        case 3:
+          assert(event instanceof Bacon.End);
+          setTimeout(done, 0);
+          break;
+        default:
+          throw new Error("Should not happen");
+      }
+    });
+  });
+
   it('can listen on Bacon stream multiple times', function(done) {
     var bus = new Bacon.Bus();
 
