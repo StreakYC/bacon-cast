@@ -214,7 +214,7 @@ describe('baconCast', function() {
     });
   });
 
-  it('supports RxJS observable unsubscription', function(done) {
+  it('supports RxJS infinite synchronous observable unsubscription', function(done) {
     var i = 0;
     var s = baconCast(Bacon, Rx.Observable.repeat(null).map(function() {
       if (++i >= 3) {
