@@ -5,7 +5,8 @@ by libraries which use Bacon internally, but want to be able to accept streams
 from other libraries or other versions of Bacon as arguments given by the
 application.
 
-* Supports converting RxJS Observables into a Bacon stream.
+* Supports converting RxJS Observables into Bacon streams.
+* Supports converting Kefir streams into Bacon streams.
 * Supports converting a Bacon stream created by one instance of the Bacon
   library into a stream usable by a different instance of a Bacon library.
   (Bacon does not support using streams from different Bacon libraries
@@ -21,7 +22,8 @@ like Browserify. This project is in NPM and can be installed with
 
 Suppose you have a library that exports a single function `doStuff`, which can
 take a stream as an argument. By using BaconCast, you can support any RxJS
-streams, Bacon.js streams, or constants that your users might pass to you.
+streams, Kefir streams, Bacon.js streams, or constants that your users might
+pass to you.
 
 ```
 var Bacon = require('baconjs');
@@ -37,8 +39,9 @@ module.exports = function doStuff(input) {
 ```
 
 If you did not use BaconCast, then your users would be required to use the same
-version and instance of Bacon as you, you wouldn't support RxJS streams without
-more work, and you would have to handle non-stream constant values specially.
+version and instance of Bacon as you, you wouldn't support RxJS or Kefir
+streams without more work, and you would have to handle non-stream constant
+values specially.
 
 ## API
 

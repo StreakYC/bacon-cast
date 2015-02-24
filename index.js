@@ -28,6 +28,30 @@ function baconCast(Bacon, input) {
       });
       return unsub;
     });
+  } else if (input && input.onAny && input.offAny) { // Kefir
+    return Bacon.fromBinder(function(sink) {
+      function listener(event) {
+        switch (event.type) {
+          case 'value':
+            if (event.current) {
+              sink(new Bacon.Initial(constant(event.value)));
+            } else {
+              sink(new Bacon.Next(constant(event.value)));
+            }
+            break;
+          case 'error':
+            sink(new Bacon.Error(event.value));
+            break;
+          case 'end':
+            sink(new Bacon.End());
+            break;
+          default:
+            console.error("Unknown type of Kefir event", event);
+        }
+      }
+      input.onAny(listener);
+      return input.offAny.bind(input, listener);
+    });
   } else if (input && input.subscribe && input.onValue) { // Bacon
     return Bacon.fromBinder(function(sink) {
       return input.subscribe(function(event) {

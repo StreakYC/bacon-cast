@@ -30,6 +30,7 @@
   "homepage": "https://github.com/StreakYC/bacon-cast",
   "devDependencies": {
     "baconjs": "^0.7.41",
+    "kefir": "^1.1.0",
     "mocha": "^2.1.0",
     "rx": "^2.4.1"
   },
