@@ -31,14 +31,12 @@
   "devDependencies": {
     "baconjs": "^0.7.41",
     "mocha": "^2.1.0",
-    "rx": "^2.3.22"
+    "rx": "^2.4.1"
   },
   "peerDependencies": {
     "baconjs": "^0.7.41"
   },
   "dependencies": {
-    "lodash.constant": "^2.4.1",
-    "lodash.noop": "^2.4.1",
-    "lodash.once": "^2.4.1"
+    "lodash": "^3.3.1"
   }
 }

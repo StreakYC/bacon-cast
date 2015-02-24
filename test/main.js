@@ -1,4 +1,4 @@
-var constant = require('lodash.constant');
+var constant = require('lodash/utility/constant');
 var assert = require('assert');
 var Bacon = require('baconjs');
 var Rx = require('rx');
