@@ -1,6 +1,6 @@
 {
   "name": "bacon-cast",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Convert various types of streams to Bacon.js streams.",
   "main": "index.js",
   "scripts": {
