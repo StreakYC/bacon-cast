@@ -38,7 +38,7 @@ module.exports = function doStuff(input) {
   inputStream.takeUntil(Bacon.later(5000)).onValue(function(value) {
     console.log('doStuff received value', value);
   });
-}
+};
 ```
 
 If you did not use BaconCast, then your users would be required to use the same
