@@ -28,7 +28,7 @@ take a stream as an argument. By using BaconCast, you can support any RxJS
 streams, Kefir streams, Bacon.js streams, or constants that your users might
 pass to you.
 
-```
+```javascript
 var Bacon = require('baconjs');
 var baconCast = require('bacon-cast');
 
