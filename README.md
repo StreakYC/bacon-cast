@@ -1,5 +1,8 @@
 # BaconCast
 
+[![Circle CI](https://circleci.com/gh/StreakYC/bacon-cast.svg?style=shield)](https://circleci.com/gh/StreakYC/bacon-cast)
+[![npm version](https://badge.fury.io/js/bacon-cast.svg)](https://badge.fury.io/js/bacon-cast)
+
 Converts various types of streams to Bacon.js streams. This is intended for use
 by libraries which use Bacon internally, but want to be able to accept streams
 from other libraries or other versions of Bacon as arguments given by the
