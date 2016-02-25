@@ -11,24 +11,16 @@ var constant = require('lodash/utility/constant');
 function baconCast(Bacon, input) {
   if (input && input.subscribe && input.subscribeOnNext) { // RxJS
     return Bacon.fromBinder(function(sink) {
-      var unsub;
-      input.takeUntil({
-        then: function(cb) {
-          unsub = once(function() {
-            sink = noop; // Avoid sinking the End event that cb() will trigger
-            cb();
-          });
-        }
-      }).subscribe(function onNext(value) {
-        if (sink(new Bacon.Next(constant(value))) === Bacon.noMore) {
-          unsub();
+      var sub = input.subscribe(function onNext(value) {
+        if (sink(new Bacon.Next(constant(value))) === Bacon.noMore && sub) {
+          sub.dispose();
         }
       }, function onError(err) {
         sink([new Bacon.Error(err), new Bacon.End()]);
       }, function onCompleted() {
         sink(new Bacon.End());
       });
-      return unsub;
+      return function() { sub.dispose(); };
     });
   } else if (input && input.onAny && input.offAny) { // Kefir
     return Bacon.fromBinder(function(sink) {
@@ -52,17 +44,17 @@ function baconCast(Bacon, input) {
         }
       }
       input.onAny(listener);
-      return input.offAny.bind(input, listener);
+      return function() { input.offAny(listener); };
     });
   } else if (input && input.subscribe && input.onValue) { // Bacon
     return Bacon.fromBinder(function(sink) {
       return input.subscribe(function(event) {
         if (event.isNext()) {
-          sink(new Bacon.Next(event.value.bind(event)));
+          sink(new Bacon.Next(function() { return event.value(); }));
         } else if (event.isEnd()) {
           sink(new Bacon.End());
         } else if (event.isInitial()) {
-          sink(new Bacon.Initial(event.value.bind(event)));
+          sink(new Bacon.Initial(function() { return event.value(); }));
         } else if (event.isError()) {
           sink(new Bacon.Error(event.error));
         } else {
