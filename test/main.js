@@ -1,8 +1,11 @@
+'use strict';
+
 var constant = require('lodash/utility/constant');
 var assert = require('assert');
 var Bacon = require('baconjs');
 var Rx = require('rx');
 var Kefir = require('kefir');
+var kefirBus = require('kefir-bus');
 
 var baconCast = require('..');
 
@@ -259,42 +262,6 @@ describe('baconCast', function() {
       });
     });
 
-    it('supports infinite synchronous observable unsubscription', function(done) {
-      var i = 0;
-      var s = baconCast(Bacon, Rx.Observable.repeat(null).map(function() {
-        if (++i >= 3) {
-          var err = new Error("Should not happen");
-          // The error would be caught by Rx, so also throw it where it will fail the test.
-          setTimeout(function() {
-            throw err;
-          }, 0);
-          throw err;
-        }
-        return i;
-      })).take(2);
-
-      var calls = 0;
-      s.subscribe(function(event) {
-        switch(++calls) {
-          case 1:
-            assert(event instanceof Bacon.Next);
-            assert.strictEqual(event.value(), 1);
-            break;
-          case 2:
-            assert(event instanceof Bacon.Next);
-            assert.strictEqual(event.value(), 2);
-            break;
-          case 3:
-            assert(event instanceof Bacon.End);
-            // If the stream doesn't stop, done won't get called.
-            setTimeout(done, 0);
-            break;
-          default:
-            throw new Error("Should not happen");
-        }
-      });
-    });
-
     it('can listen on stream multiple times', function(done) {
       var subject = new Rx.Subject();
 
@@ -362,7 +329,7 @@ describe('baconCast', function() {
     it('supports all event types', function(done) {
       var s = baconCast(Bacon, Kefir.merge([
         Kefir.later(0, 'beep'),
-        Kefir.later(1, 'bad').valuesToErrors(),
+        Kefir.later(1, 'bad').flatMap(Kefir.constantError),
         Kefir.later(2, shouldNotBeCalled)
       ]).toProperty(constant('prop')));
 
@@ -370,7 +337,7 @@ describe('baconCast', function() {
       s.subscribe(function(event) {
         switch(++calls) {
           case 1:
-            assert(event instanceof Bacon.Initial);
+            assert(event instanceof Bacon.Next);
             assert.strictEqual(event.value(), 'prop');
             break;
           case 2:
@@ -396,7 +363,7 @@ describe('baconCast', function() {
     });
 
     it('can listen on stream multiple times', function(done) {
-      var bus = new Kefir.Bus();
+      var bus = new kefirBus();
 
       var s = baconCast(Bacon, bus);
 

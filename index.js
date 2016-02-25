@@ -1,3 +1,5 @@
+'use strict';
+
 var once = require('lodash/function/once');
 var noop = require('lodash/utility/noop');
 var constant = require('lodash/utility/constant');
@@ -33,7 +35,7 @@ function baconCast(Bacon, input) {
       function listener(event) {
         switch (event.type) {
           case 'value':
-            if (event.current) {
+            if (event.current) { // No longer present in Kefir 3
               sink(new Bacon.Initial(constant(event.value)));
             } else {
               sink(new Bacon.Next(constant(event.value)));
