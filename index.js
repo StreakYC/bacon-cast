@@ -1,8 +1,8 @@
 'use strict';
 
-var once = require('lodash/function/once');
-var noop = require('lodash/utility/noop');
-var constant = require('lodash/utility/constant');
+var once = require('lodash/once');
+var noop = require('lodash/noop');
+var constant = require('lodash/constant');
 
 // Bacon doesn't support stream instances from different instances of the
 // library directly interacting. This function converts a foreign Bacon stream

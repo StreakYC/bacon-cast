@@ -1,13 +1,13 @@
 'use strict';
 
-var constant = require('lodash/utility/constant');
-var assert = require('assert');
-var Bacon = require('baconjs');
-var Rx = require('rx');
-var Kefir = require('kefir');
-var kefirBus = require('kefir-bus');
+const constant = require('lodash/constant');
+const assert = require('assert');
+const Bacon = require('baconjs');
+const Rx = require('rx');
+const Kefir = require('kefir');
+const kefirBus = require('kefir-bus');
 
-var baconCast = require('..');
+const baconCast = require('..');
 
 function testStreamForOneValue(stream, value, callback) {
   var s = baconCast(Bacon, stream);
