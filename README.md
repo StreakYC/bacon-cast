@@ -8,7 +8,7 @@ by libraries which use Bacon internally, but want to be able to accept streams
 from other libraries or other versions of Bacon as arguments given by the
 application.
 
-* Supports converting RxJS Observables into Bacon streams.
+* Supports converting RxJS (v2-v5) Observables into Bacon streams.
 * Supports converting Kefir streams into Bacon streams.
 * Supports converting a Bacon stream created by one instance of the Bacon
   library into a stream usable by a different instance of a Bacon library.

@@ -4,6 +4,7 @@ const constant = require('lodash/constant');
 const assert = require('assert');
 const Bacon = require('baconjs');
 const Rx = require('rx');
+const Rx5 = require('@reactivex/rxjs');
 const Kefir = require('kefir');
 const kefirBus = require('kefir-bus');
 
@@ -204,7 +205,7 @@ describe('baconCast', function() {
 
   describe('RxJS', function() {
     it('supports basic observable', function(done) {
-      var s = baconCast(Bacon, Rx.Observable.fromArray([
+      var s = baconCast(Bacon, Rx.Observable.from([
         'beep',
         shouldNotBeCalled
       ]));
@@ -232,7 +233,7 @@ describe('baconCast', function() {
 
     it('supports observable with error', function(done) {
       var err = new Error('some err');
-      var s = baconCast(Bacon, Rx.Observable.fromArray([
+      var s = baconCast(Bacon, Rx.Observable.from([
         'beep',
         shouldNotBeCalled
       ]).concat(Rx.Observable.throw(err)));
@@ -306,6 +307,115 @@ describe('baconCast', function() {
       subject.onNext(1);
       subject.onNext(2);
       subject.onCompleted();
+    });
+  });
+
+  describe('RxJS 5', function() {
+    const Rx = Rx5;
+
+    it('supports basic observable', function(done) {
+      var s = baconCast(Bacon, Rx.Observable.from([
+        'beep',
+        shouldNotBeCalled
+      ]));
+
+      var calls = 0;
+      s.subscribe(function(event) {
+        switch(++calls) {
+          case 1:
+            assert(event instanceof Bacon.Next);
+            assert.strictEqual(event.value(), 'beep');
+            break;
+          case 2:
+            assert(event instanceof Bacon.Next);
+            assert.strictEqual(event.value(), shouldNotBeCalled);
+            break;
+          case 3:
+            assert(event instanceof Bacon.End);
+            done();
+            break;
+          default:
+            throw new Error("Should not happen");
+        }
+      });
+    });
+
+    it('supports observable with error', function(done) {
+      var err = new Error('some err');
+      var s = baconCast(Bacon, Rx.Observable.from([
+        'beep',
+        shouldNotBeCalled
+      ]).concat(Rx.Observable.throw(err)));
+
+      var calls = 0;
+      s.subscribe(function(event) {
+        switch(++calls) {
+          case 1:
+            assert(event instanceof Bacon.Next);
+            assert.strictEqual(event.value(), 'beep');
+            break;
+          case 2:
+            assert(event instanceof Bacon.Next);
+            assert.strictEqual(event.value(), shouldNotBeCalled);
+            break;
+          case 3:
+            assert(event instanceof Bacon.Error);
+            assert.strictEqual(event.error, err);
+            break;
+          case 4:
+            assert(event instanceof Bacon.End);
+            done();
+            break;
+          default:
+            throw new Error("Should not happen");
+        }
+      });
+    });
+
+    it('can listen on stream multiple times', function(done) {
+      var subject = new Rx.Subject();
+
+      var s = baconCast(Bacon, subject);
+
+      var calls1 = 0, calls2 = 0;
+      s.take(1).subscribe(function(event) {
+        switch (++calls1) {
+          case 1:
+            assert(event instanceof Bacon.Next);
+            assert.strictEqual(event.value(), 1);
+            break;
+          case 2:
+            assert(event instanceof Bacon.End);
+
+            s.subscribe(function(event) {
+              switch (++calls2) {
+                case 1:
+                  assert(event instanceof Bacon.Next);
+                  assert.strictEqual(event.value(), 2);
+                  break;
+                case 2:
+                  assert(event instanceof Bacon.End);
+
+                  setTimeout(function() {
+                    s.subscribe(function(event) {
+                      assert(event instanceof Bacon.End);
+                      done();
+                    });
+                  }, 0);
+
+                  break;
+                default:
+                  throw new Error("Should not happen");
+              }
+            });
+            break;
+          default:
+            throw new Error("Should not happen");
+        }
+      });
+      subject.next(1);
+      subject.next(2);
+      subject.complete();
     });
   });
 

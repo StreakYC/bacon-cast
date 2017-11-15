@@ -9,7 +9,7 @@ var constant = require('lodash/constant');
 // or an RxJS stream into a native Bacon stream. It also converts non-streams
 // into a stream that emits a single value.
 function baconCast(Bacon, input) {
-  if (input && input.subscribe && input.subscribeOnNext) { // RxJS
+  if (input && input.subscribe && input.subscribeOnNext) { // RxJS <= 4
     return Bacon.fromBinder(function(sink) {
       var sub = input.subscribe(function onNext(value) {
         if (sink(new Bacon.Next(constant(value))) === Bacon.noMore && sub) {
@@ -21,6 +21,19 @@ function baconCast(Bacon, input) {
         sink(new Bacon.End());
       });
       return function() { sub.dispose(); };
+    });
+  } else if (input && input.subscribe && input.onErrorResumeNext) { // RxJS 5
+    return Bacon.fromBinder(function(sink) {
+      var sub = input.subscribe(function onNext(value) {
+        if (sink(new Bacon.Next(constant(value))) === Bacon.noMore && sub) {
+          sub.unsubscribe();
+        }
+      }, function onError(err) {
+        sink([new Bacon.Error(err), new Bacon.End()]);
+      }, function onCompleted() {
+        sink(new Bacon.End());
+      });
+      return function() { sub.unsubscribe(); };
     });
   } else if (input && input.onAny && input.offAny) { // Kefir
     return Bacon.fromBinder(function(sink) {
