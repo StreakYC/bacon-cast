@@ -444,7 +444,7 @@ describe('baconCast', function() {
     });
 
     it('supports all event types', function(done) {
-      this.slow(100);
+      this.slow(150);
       const s = baconCast(Bacon, Kefir.merge([
         Kefir.later(0, 'beep'),
         Kefir.later(20, 'bad').flatMap(Kefir.constantError),
