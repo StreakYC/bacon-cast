@@ -22,7 +22,7 @@ function baconCast(Bacon, input) {
       });
       return function() { sub.dispose(); };
     });
-  } else if (input && input.subscribe && input.onErrorResumeNext) { // RxJS 5
+  } else if (input && input.subscribe && input.pipe && input.lift) { // RxJS 5
     return Bacon.fromBinder(function(sink) {
       var sub = input.subscribe(function onNext(value) {
         if (sink(new Bacon.Next(constant(value))) === Bacon.noMore && sub) {

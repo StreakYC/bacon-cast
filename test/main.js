@@ -4,7 +4,6 @@ const constant = require('lodash/constant');
 const assert = require('assert');
 const Bacon = require('baconjs');
 const Rx = require('rx');
-const Rx5 = require('@reactivex/rxjs');
 const Kefir = require('kefir');
 const kefirBus = require('kefir-bus');
 
@@ -311,16 +310,24 @@ describe('baconCast', function() {
   });
 
   describe('RxJS 5', function() {
-    const Rx = Rx5;
+    // Shadow this name to let us know if we accidentally use Rx 4 in this test.
+    const Rx = null; // eslint-disable-line no-unused-vars
+
+    const {from} = require('@reactivex/rxjs/dist/package/observable/from');
+    const {map} = require('@reactivex/rxjs/dist/package/operators/map');
+    const {interval} = require('@reactivex/rxjs/dist/package/observable/interval');
+    const {concat} = require('@reactivex/rxjs/dist/package/observable/concat');
+    const {_throw} = require('@reactivex/rxjs/dist/package/observable/throw');
+    const {Subject} = require('@reactivex/rxjs/dist/package/Subject');
 
     it('supports basic observable', function(done) {
-      var s = baconCast(Bacon, Rx.Observable.from([
+      const s = baconCast(Bacon, from([
         'beep',
         shouldNotBeCalled
       ]));
 
-      var calls = 0;
-      s.subscribe(function(event) {
+      let calls = 0;
+      s.subscribe(event => {
         switch(++calls) {
           case 1:
             assert(event instanceof Bacon.Next);
@@ -341,14 +348,14 @@ describe('baconCast', function() {
     });
 
     it('supports observable with error', function(done) {
-      var err = new Error('some err');
-      var s = baconCast(Bacon, Rx.Observable.from([
+      const err = new Error('some err');
+      const s = baconCast(Bacon, concat(from([
         'beep',
         shouldNotBeCalled
-      ]).concat(Rx.Observable.throw(err)));
+      ]), _throw(err)));
 
-      var calls = 0;
-      s.subscribe(function(event) {
+      let calls = 0;
+      s.subscribe(event => {
         switch(++calls) {
           case 1:
             assert(event instanceof Bacon.Next);
@@ -373,12 +380,12 @@ describe('baconCast', function() {
     });
 
     it('can listen on stream multiple times', function(done) {
-      var subject = new Rx.Subject();
+      const subject = new Subject();
 
-      var s = baconCast(Bacon, subject);
+      const s = baconCast(Bacon, subject);
 
-      var calls1 = 0, calls2 = 0;
-      s.take(1).subscribe(function(event) {
+      let calls1 = 0, calls2 = 0;
+      s.take(1).subscribe(event => {
         switch (++calls1) {
           case 1:
             assert(event instanceof Bacon.Next);
