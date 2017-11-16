@@ -444,13 +444,14 @@ describe('baconCast', function() {
     });
 
     it('supports all event types', function(done) {
-      var s = baconCast(Bacon, Kefir.merge([
+      this.slow(100);
+      const s = baconCast(Bacon, Kefir.merge([
         Kefir.later(0, 'beep'),
-        Kefir.later(1, 'bad').flatMap(Kefir.constantError),
-        Kefir.later(2, shouldNotBeCalled)
+        Kefir.later(20, 'bad').flatMap(Kefir.constantError),
+        Kefir.later(40, shouldNotBeCalled)
       ]).toProperty(constant('prop')));
 
-      var calls = 0;
+      let calls = 0;
       s.subscribe(function(event) {
         switch(++calls) {
           case 1:
