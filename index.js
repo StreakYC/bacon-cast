@@ -22,19 +22,6 @@ function baconCast(Bacon, input) {
       });
       return function() { sub.dispose(); };
     });
-  } else if (input && input.subscribe && input.pipe && input.lift) { // RxJS 5
-    return Bacon.fromBinder(function(sink) {
-      var sub = input.subscribe(function onNext(value) {
-        if (sink(new Bacon.Next(constant(value))) === Bacon.noMore && sub) {
-          sub.unsubscribe();
-        }
-      }, function onError(err) {
-        sink([new Bacon.Error(err), new Bacon.End()]);
-      }, function onCompleted() {
-        sink(new Bacon.End());
-      });
-      return function() { sub.unsubscribe(); };
-    });
   } else if (input && input.onAny && input.offAny) { // Kefir
     return Bacon.fromBinder(function(sink) {
       function listener(event) {
@@ -74,6 +61,19 @@ function baconCast(Bacon, input) {
           console.error("Unknown type of Bacon event", event);
         }
       });
+    });
+  } else if (input && input.subscribe && input.pipe && input.lift) { // RxJS 5
+    return Bacon.fromBinder(function(sink) {
+      var sub = input.subscribe(function onNext(value) {
+        if (sink(new Bacon.Next(constant(value))) === Bacon.noMore && sub) {
+          sub.unsubscribe();
+        }
+      }, function onError(err) {
+        sink([new Bacon.Error(err), new Bacon.End()]);
+      }, function onCompleted() {
+        sink(new Bacon.End());
+      });
+      return function() { sub.unsubscribe(); };
     });
   } else {
     return Bacon.once(input);
